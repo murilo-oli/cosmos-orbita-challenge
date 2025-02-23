@@ -7,7 +7,7 @@ public abstract class Base
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id {get;set;} = 0;
+    public long Id {get;set;} = 1;
     public bool IsActive {get;set;} = true;
     
     [Required]

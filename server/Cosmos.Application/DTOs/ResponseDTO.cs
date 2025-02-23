@@ -3,7 +3,7 @@ using Cosmos.Application.Enums;
 
 namespace Cosmos.Application.Utilities;
 
-public class ResponseModel
+public class ResponseDTO
 {
     public bool Success { get; private set; }
     public int StatusCode { get; private set; }
@@ -12,7 +12,7 @@ public class ResponseModel
     public dynamic? Data { get; private set; }
 
 
-    public ResponseModel(bool success, int statusCode, EResponseType responseType, string? description = null, dynamic? data = null)
+    public ResponseDTO(bool success, int statusCode, EResponseType responseType, string? description = null, dynamic? data = null)
     {
         Success = success;
         StatusCode = statusCode;

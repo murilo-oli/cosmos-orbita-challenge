@@ -6,10 +6,11 @@ namespace Cosmos.Application.Interfaces;
 
 public interface IStudentService
 {
-    Task<ResponseModel> Add(CreateStudentDTO model, CancellationToken cancellationToken);
-    Task<ResponseModel> Update(long Id, UpdateStudentDTO model, CancellationToken cancellationToken);
-    Task<ResponseModel> SetStatus(long Id, bool status, CancellationToken cancellationToken);
-    Task<ResponseModel> Delete(long Id, CancellationToken cancellationToken);
-    Task<ResponseModel> GetFiltered(Filter filter, CancellationToken cancellationToken);
-    Task<ResponseModel> GetAllFiltered(Pagination? pagination, Filter filter, CancellationToken cancellationToken);
+    Task<ResponseDTO> Add(CreateStudentDTO model, CancellationToken cancellationToken);
+    Task<ResponseDTO> Update(long Id, UpdateStudentDTO model, CancellationToken cancellationToken);
+    Task<ResponseDTO> SetStatus(long Id, bool status, CancellationToken cancellationToken);
+    Task<ResponseDTO> Delete(long Id, CancellationToken cancellationToken);
+    Task<ResponseDTO> GetFiltered(FilterDTO filter, CancellationToken cancellationToken);
+    Task<ResponseDTO> GetAllFiltered(Pagination? pagination, FilterDTO filter, CancellationToken cancellationToken);
+    Task<ResponseDTO> GetAll(Pagination? pagination, CancellationToken cancellationToken);
 }

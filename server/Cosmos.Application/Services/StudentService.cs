@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using Cosmos.Application.DTOs;
 using Cosmos.Application.Interfaces;
@@ -17,9 +18,9 @@ public class StudentService : IStudentService
         _studentRepository = studentRepository;
     }
 
-    public async Task<ResponseModel> Add(CreateStudentDTO student, CancellationToken cancellationToken)
+    public async Task<ResponseDTO> Add(CreateStudentDTO student, CancellationToken cancellationToken)
     {
-        ResponseModel checkModel = await CheckCreateModel(student, cancellationToken);
+        ResponseDTO checkModel = await CheckCreateModel(student, cancellationToken);
 
         if (!checkModel.Success) return checkModel;
 
@@ -29,7 +30,7 @@ public class StudentService : IStudentService
             {
                 Name = student.Name,
                 Email = student.Email,
-                CPF = student.CPF,
+                CPF = student.CPF.Trim().Replace(".", "").Replace("-", ""),
                 RA = student.RA,
                 IsActive = true
             };
@@ -44,9 +45,9 @@ public class StudentService : IStudentService
         return ResponseManager.Created(student, $"Estudante cadastrado com sucesso!");
     }
 
-    public async Task<ResponseModel> Update(long Id, UpdateStudentDTO model, CancellationToken cancellationToken)
+    public async Task<ResponseDTO> Update(long Id, UpdateStudentDTO model, CancellationToken cancellationToken)
     {
-        ResponseModel checkModel = await CheckUpdateModel(Id, cancellationToken);
+        ResponseDTO checkModel = await CheckUpdateModel(Id, model, cancellationToken);
 
         if (!checkModel.Success) return checkModel;
 
@@ -67,7 +68,7 @@ public class StudentService : IStudentService
         return ResponseManager.Success();
     }
 
-    public async Task<ResponseModel> SetStatus(long Id, bool status, CancellationToken cancellationToken)
+    public async Task<ResponseDTO> SetStatus(long Id, bool status, CancellationToken cancellationToken)
     {
         Student? studentFound = await _studentRepository.GetById(Id, cancellationToken);
 
@@ -87,7 +88,7 @@ public class StudentService : IStudentService
         return ResponseManager.Success();
     }
 
-    public async Task<ResponseModel> Delete(long Id, CancellationToken cancellationToken)
+    public async Task<ResponseDTO> Delete(long Id, CancellationToken cancellationToken)
     {
         Student? studentFound = await _studentRepository.GetById(Id, cancellationToken);
 
@@ -105,29 +106,38 @@ public class StudentService : IStudentService
         return ResponseManager.Success();
     }
 
-    public async Task<ResponseModel> GetFiltered(Filter filter, CancellationToken cancellationToken)
+    public async Task<ResponseDTO> GetFiltered(FilterDTO filter, CancellationToken cancellationToken)
     {
         Func<IQueryable<Student>, IQueryable<Student>> query = BuildStudentQuery(filter);
 
-        Student? studentFound = await _studentRepository.Get(query, cancellationToken);
+        Student? studentFound = await _studentRepository.GetFiltered(query, cancellationToken);
 
         if(studentFound == null) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
         return ResponseManager.Success(studentFound);
     }
 
-    public async Task<ResponseModel> GetAllFiltered(Pagination? pagination, Filter filter, CancellationToken cancellationToken)
+    public async Task<ResponseDTO> GetAllFiltered(Pagination? pagination, FilterDTO filter, CancellationToken cancellationToken)
     {
         Func<IQueryable<Student>, IQueryable<Student>> query = BuildStudentQuery(filter);
 
-        IEnumerable<Student> studentFound = await _studentRepository.GetAll(query, pagination, cancellationToken);
+        IEnumerable<Student> studentFound = await _studentRepository.GetAllFiltered(query, pagination, cancellationToken);
 
-        if(studentFound == null) return ResponseManager.NotFound("Nenhum estudante encontrado!");
+        if(!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
         return ResponseManager.Success(studentFound);
     }
 
-    private static Func<IQueryable<Student>, IQueryable<Student>> BuildStudentQuery(Filter filter)
+    public async Task<ResponseDTO> GetAll(Pagination? pagination, CancellationToken cancellationToken)
+    {
+        IEnumerable<Student> studentFound = await _studentRepository.GetAll(pagination, cancellationToken);
+        
+        if(!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
+
+        return ResponseManager.Success(studentFound);
+    }
+
+    private static Func<IQueryable<Student>, IQueryable<Student>> BuildStudentQuery(FilterDTO filter)
     {
         return query =>
         {
@@ -150,8 +160,11 @@ public class StudentService : IStudentService
         };
     }
 
-    private async Task<ResponseModel> CheckCreateModel(CreateStudentDTO model, CancellationToken cancellationToken)
+    private async Task<ResponseDTO> CheckCreateModel(CreateStudentDTO model, CancellationToken cancellationToken)
     {
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(model);
+
         if (String.IsNullOrEmpty(model.CPF) ||
             String.IsNullOrEmpty(model.RA) ||
             String.IsNullOrEmpty(model.Name) ||
@@ -160,18 +173,35 @@ public class StudentService : IStudentService
             return ResponseManager.InvalidModel("Campos vazios.");
         }
 
+        if (!Validator.TryValidateObject(model, validationContext, validationResults, true))
+        {
+            return ResponseManager.InvalidModel(validationResults.First().ErrorMessage);
+        }
+
+        if(!ValidateEmailCPF.ValidateEmail(model.Email)) return ResponseManager.InvalidModel($"O email {model.Email} é inválido!");
+        
+        if(!ValidateEmailCPF.ValidateCPF(model.CPF)) return ResponseManager.InvalidModel($"O CPF {model.CPF} é inválido!");
+
         if (!String.IsNullOrEmpty(model.RA))
         {
             bool studentFound = await _studentRepository.Exist(us => us.RA == model.RA, cancellationToken);
 
-            if (!studentFound) return ResponseManager.Conflict($"Estudante com RA {model.RA} já cadastrado.");
+            if (studentFound) return ResponseManager.Conflict($"Estudante com RA {model.RA} já cadastrado.");
         }
 
         return ResponseManager.Success();
     }
 
-    private async Task<ResponseModel> CheckUpdateModel(long Id, CancellationToken cancellationToken)
+    private async Task<ResponseDTO> CheckUpdateModel(long Id, UpdateStudentDTO model, CancellationToken cancellationToken)
     {
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(model);
+
+        if (!Validator.TryValidateObject(model, validationContext, validationResults, true))
+        {
+            return ResponseManager.InvalidModel(validationResults.First().ErrorMessage);
+        }
+
         Student? studentFound = await _studentRepository.GetById(Id, cancellationToken);
 
         if (studentFound == null) return ResponseManager.NotFound($"Estudante não encontrado.");

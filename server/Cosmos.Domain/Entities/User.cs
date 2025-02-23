@@ -7,7 +7,7 @@ namespace Cosmos.Domain.Entities;
 public class User : Base
 {
     [StringLength(64)]
-    public byte[] Password {get;set;} = default!;
+    public string Password {get;set;} = default!;
 
     [StringLength(255)]
     public string AvatarPath {get;set;} = default!;

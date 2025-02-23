@@ -31,7 +31,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : Base
         return entities;
     }
 
-    public async Task<T?> Get(Func<IQueryable<T>, IQueryable<T>?> expression, CancellationToken cancellationToken = default)
+    public async Task<T?> GetFiltered(Func<IQueryable<T>, IQueryable<T>?> expression, CancellationToken cancellationToken = default)
     {
         IQueryable<T> query = _context.Set<T>().AsNoTracking();
 
@@ -48,7 +48,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : Base
         return await _context.Set<T>().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<T>> GetAll(Func<IQueryable<T>, IQueryable<T>?> expression, Pagination? pagination, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<T>> GetAllFiltered(Func<IQueryable<T>, IQueryable<T>?> expression, Pagination? pagination, CancellationToken cancellationToken = default)
     {
         IQueryable<T> query = _context.Set<T>().AsNoTracking();
 

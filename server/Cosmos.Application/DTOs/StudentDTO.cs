@@ -5,7 +5,7 @@ namespace Cosmos.Application.DTOs;
 public class CreateStudentDTO
 {
     [Required]
-    [StringLength(11, ErrorMessage = "O CPF do estudante precisa ter {2} caracteres.")]
+    [StringLength(14, ErrorMessage = "O CPF do estudante precisa ter {1} caracteres.")]
     public string CPF {get;set;} = default!;
     
     [Required]

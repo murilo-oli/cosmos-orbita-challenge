@@ -13,9 +13,9 @@ public interface IBaseRepository<T> where T : Base
     Task UpdateRange(List<T> entities, CancellationToken cancellationToken = default);
     Task<T> Remove(T entity, CancellationToken cancellationToken = default);
     Task RemoveRange(List<T> entities, CancellationToken cancellationToken = default);
-    Task<T?> Get(Func<IQueryable<T>, IQueryable<T>?> expression, CancellationToken cancellationToken = default);
+    Task<T?> GetFiltered(Func<IQueryable<T>, IQueryable<T>?> expression, CancellationToken cancellationToken = default);
     Task<T?> GetById(long id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<T>> GetAll(Func<IQueryable<T>, IQueryable<T>?> expression, Pagination? pagination, CancellationToken cancellationToken = default);
     Task<IEnumerable<T>> GetAll(Pagination? pagination, CancellationToken cancellationToken = default);
+    Task<IEnumerable<T>> GetAllFiltered(Func<IQueryable<T>, IQueryable<T>?> expression, Pagination? pagination, CancellationToken cancellationToken = default);
     Task<bool> Exist(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default);
 }
