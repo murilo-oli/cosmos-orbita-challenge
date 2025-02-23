@@ -1,5 +1,7 @@
 using System;
 using Cosmos.Application.DTOs;
+using Cosmos.Application.Utilities;
+using Cosmos.Infrastructure.Utilities;
 
 namespace Cosmos.Test.ApplicationTests.ModelsData;
 
@@ -101,6 +103,38 @@ public static class StudentServiceTestData
             1,
             406,
             new UpdateStudentDTO {Name = "a", Email = "rigas@bol.com"},
+            CancellationToken.None
+        };
+    }
+
+    public static IEnumerable<object[]> GetPaginatedModels()
+    {
+        yield return new object[]
+        {
+            new Pagination {CurrentPage = 1, PageSize = 2},
+            CancellationToken.None
+        };
+
+        yield return new object[]
+        {
+            null,
+            CancellationToken.None
+        };
+    }
+
+    public static IEnumerable<object[]> GetFilteredPaginatedModels()
+    {
+        yield return new object[]
+        {
+            new Pagination {CurrentPage = 1, PageSize = 4},
+            new FilterDTO {Name = "João de Souza"},
+            CancellationToken.None
+        };
+
+        yield return new object[]
+        {
+            new Pagination {CurrentPage = 1, PageSize = 2},
+            new FilterDTO {Name = "João de Souza"},
             CancellationToken.None
         };
     }

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cosmos.Infrastructure.Migrations
 {
     [DbContext(typeof(CosmosDbContext))]
-    [Migration("20250223032919_InitProject")]
+    [Migration("20250223192340_InitProject")]
     partial class InitProject
     {
         /// <inheritdoc />

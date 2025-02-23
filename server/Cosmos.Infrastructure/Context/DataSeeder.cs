@@ -10,6 +10,7 @@ public class DataSeeder
     {
         modelBuilder.Entity<User>().HasData(new User
         {
+            Id = 1,
             Name = "Administrator",
             Email = "admin@cosmos.com",
             AvatarPath = "",

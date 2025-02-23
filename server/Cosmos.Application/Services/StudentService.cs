@@ -24,17 +24,17 @@ public class StudentService : IStudentService
 
         if (!checkModel.Success) return checkModel;
 
+        Student studentMounted = new Student()
+        {
+            Name = student.Name,
+            Email = student.Email,
+            CPF = student.CPF.Trim().Replace(".", "").Replace("-", ""),
+            RA = student.RA,
+            IsActive = true
+        };
+
         try
         {
-            Student studentMounted = new Student()
-            {
-                Name = student.Name,
-                Email = student.Email,
-                CPF = student.CPF.Trim().Replace(".", "").Replace("-", ""),
-                RA = student.RA,
-                IsActive = true
-            };
-
             await _studentRepository.Add(studentMounted, cancellationToken);
         }
         catch (Exception ex)
@@ -42,7 +42,46 @@ public class StudentService : IStudentService
             return ResponseManager.InternalBadRequest(ex.Message);
         }
 
-        return ResponseManager.Created(student, $"Estudante cadastrado com sucesso!");
+        return ResponseManager.Created(studentMounted, $"Estudante cadastrado com sucesso!");
+    }
+
+    public async Task<ResponseDTO> AddRange(List<CreateStudentDTO> students, CancellationToken cancellationToken)
+    {
+        foreach (CreateStudentDTO student in students)
+        {
+            ResponseDTO checkModel = await CheckCreateModel(student, cancellationToken);
+
+            if (!checkModel.Success) return checkModel;
+        }
+
+        List<Student> studentsToSave = new List<Student>();
+
+        try
+        {
+
+            foreach (CreateStudentDTO student in students)
+            {
+                Student studentMounted = new Student()
+                {
+                    Name = student.Name,
+                    Email = student.Email,
+                    CPF = student.CPF.Trim().Replace(".", "").Replace("-", ""),
+                    RA = student.RA,
+                    IsActive = true
+                };
+
+                studentsToSave.Add(studentMounted);
+            }
+
+
+            await _studentRepository.AddRange(studentsToSave, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return ResponseManager.InternalBadRequest(ex.Message);
+        }
+
+        return ResponseManager.Created(studentsToSave, $"Lista de estudantes cadastrados com sucesso!");
     }
 
     public async Task<ResponseDTO> Update(long Id, UpdateStudentDTO model, CancellationToken cancellationToken)
@@ -52,7 +91,7 @@ public class StudentService : IStudentService
         if (!checkModel.Success) return checkModel;
 
         Student studentToUpdate = (Student)checkModel.Data!;
-        
+
         try
         {
 
@@ -113,7 +152,16 @@ public class StudentService : IStudentService
 
         Student? studentFound = await _studentRepository.GetFiltered(query, cancellationToken);
 
-        if(studentFound == null) return ResponseManager.NotFound("Nenhum estudante encontrado!");
+        if (studentFound == null) return ResponseManager.NotFound("Nenhum estudante encontrado!");
+
+        return ResponseManager.Success(studentFound);
+    }
+
+    public async Task<ResponseDTO> GetById(long Id, CancellationToken cancellationToken)
+    {
+        Student? studentFound = await _studentRepository.GetById(Id, cancellationToken);
+
+        if (studentFound == null) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
         return ResponseManager.Success(studentFound);
     }
@@ -124,7 +172,7 @@ public class StudentService : IStudentService
 
         IEnumerable<Student> studentFound = await _studentRepository.GetAllFiltered(query, pagination, cancellationToken);
 
-        if(!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
+        if (!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
         return ResponseManager.Success(studentFound);
     }
@@ -132,8 +180,8 @@ public class StudentService : IStudentService
     public async Task<ResponseDTO> GetAll(Pagination? pagination, CancellationToken cancellationToken)
     {
         IEnumerable<Student> studentFound = await _studentRepository.GetAll(pagination, cancellationToken);
-        
-        if(!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
+
+        if (!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
         return ResponseManager.Success(studentFound);
     }
@@ -179,9 +227,9 @@ public class StudentService : IStudentService
             return ResponseManager.InvalidModel(validationResults.First().ErrorMessage);
         }
 
-        if(!ValidateEmailCPF.ValidateEmail(model.Email)) return ResponseManager.InvalidModel($"O email {model.Email} é inválido!");
-        
-        if(!ValidateEmailCPF.ValidateCPF(model.CPF)) return ResponseManager.InvalidModel($"O CPF {model.CPF} é inválido!");
+        if (!ValidateEmailCPF.ValidateEmail(model.Email)) return ResponseManager.InvalidModel($"O email {model.Email} é inválido!");
+
+        if (!ValidateEmailCPF.ValidateCPF(model.CPF)) return ResponseManager.InvalidModel($"O CPF {model.CPF} é inválido!");
 
         if (!String.IsNullOrEmpty(model.RA))
         {
