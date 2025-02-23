@@ -51,9 +51,10 @@ public class StudentService : IStudentService
 
         if (!checkModel.Success) return checkModel;
 
+        Student studentToUpdate = (Student)checkModel.Data!;
+        
         try
         {
-            Student studentToUpdate = (Student)checkModel.Data!;
 
             studentToUpdate.Name = model.Name;
             studentToUpdate.Email = model.Email;
@@ -65,7 +66,7 @@ public class StudentService : IStudentService
             ResponseManager.InternalBadRequest(ex.Message);
         }
 
-        return ResponseManager.Success();
+        return ResponseManager.Success(studentToUpdate);
     }
 
     public async Task<ResponseDTO> SetStatus(long Id, bool status, CancellationToken cancellationToken)

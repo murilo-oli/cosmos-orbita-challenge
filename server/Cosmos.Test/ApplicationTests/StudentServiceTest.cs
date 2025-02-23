@@ -18,19 +18,18 @@ public class StudentServiceTest
     private readonly CosmosDbContext _context;
     private readonly IBaseRepository<Student> _studentRepository;
     private readonly IStudentService _studentService;
-    private readonly CancellationToken _cancellationToken;
-
+    
     public StudentServiceTest()
     {
         var options = new DbContextOptionsBuilder<CosmosDbContext>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
+        .EnableSensitiveDataLogging()
         .Options;
 
         _context = new CosmosDbContext(options);
         _studentRepository = new BaseRepository<Student>(_context);
         _studentService = new StudentService(_studentRepository); 
     }
-
 
     [Theory(DisplayName = "Should create a student successfully!")]
     [MemberData(nameof(StudentServiceTestData.ValidCreateModels), MemberType = typeof(StudentServiceTestData))]
@@ -55,7 +54,7 @@ public class StudentServiceTest
         };
 
         //Act
-        await _studentService.Add(studentDTO, _cancellationToken);
+        await _studentService.Add(studentDTO, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         //Assert
@@ -64,7 +63,7 @@ public class StudentServiceTest
         Assert.NotNull(response);
         Assert.Equal(200, response.StatusCode);
 
-        Student studentFound = response.Data as Student;
+        Student? studentFound = response.Data as Student;
         Assert.NotNull(studentFound);
         Assert.Equal(studentDTO.Name, studentFound.Name);
         Assert.Equal(studentDTO.Email, studentFound.Email);
@@ -82,5 +81,75 @@ public class StudentServiceTest
         //Assert
         Assert.NotNull(response);
         Assert.Equal(406, response.StatusCode);
+    }
+
+    [Theory(DisplayName = "Should not create a student because RA conflicts")]
+    [MemberData(nameof(StudentServiceTestData.ConflictCreateModels), MemberType = typeof(StudentServiceTestData))]
+    public async Task ShouldNotCreateAStudentByRAConflicts(CreateStudentDTO studentDTO, CancellationToken cancellationToken)
+    {
+        //Arrange
+        List<CreateStudentDTO> studentMock = new List<CreateStudentDTO>{
+            new() {Name = "João Augusto dos Santos", Email = "joao.santos@gmail.com", RA = "101235", CPF = "02941724834"},
+            new() {Name = "Márcia Heloisa dos Reis", Email = "marcia.reis@hotmail.com", RA = "101236", CPF = "343.799.298-84"},
+        };
+
+        foreach(CreateStudentDTO student in studentMock)
+        {
+            await _studentService.Add(student, cancellationToken);
+        }
+
+        //Act
+        ResponseDTO response = await _studentService.Add(studentDTO, cancellationToken);
+
+        //Assert
+        Assert.NotNull(response);
+        Assert.Equal(409, response.StatusCode);
+    }
+
+    [Theory(DisplayName = "Should update students successfully!")]
+    [MemberData(nameof(StudentServiceTestData.ValidUpdateModels), MemberType = typeof(StudentServiceTestData))]
+    public async Task ShouldUpdateStudentSuccessfully(long id, UpdateStudentDTO studentDTO, CancellationToken cancellationToken)
+    {
+        //Arrange
+        await _studentService.Add(
+            new CreateStudentDTO{
+                Name = "Lucrécia Alberta de Souza", 
+                Email = "lu_23@gmail.com", 
+                RA = "101235", 
+                CPF = "36094849000"
+        }, cancellationToken);
+
+        //Act
+        ResponseDTO response = await _studentService.Update(id, studentDTO, cancellationToken);
+
+        //Assert
+        Assert.NotNull(response);
+        Assert.Equal(200, response.StatusCode);
+
+        Student? studentFound = response.Data as Student;
+        Assert.NotNull(studentFound);
+        Assert.Equal(studentDTO.Name, studentFound.Name);
+        Assert.Equal(studentDTO.Email, studentFound.Email);
+    }
+
+    [Theory(DisplayName = "Should not update students!")]
+    [MemberData(nameof(StudentServiceTestData.InvalidUpdateModels), MemberType = typeof(StudentServiceTestData))]
+    public async Task ShouldNotUpdateStudent(long id, int statusDesired, UpdateStudentDTO studentDTO, CancellationToken cancellationToken)
+    {
+        //Arrange
+        await _studentService.Add(
+            new CreateStudentDTO{
+                Name = "Lucrécia Alberta de Souza", 
+                Email = "lu_23@gmail.com", 
+                RA = "101235", 
+                CPF = "36094849000"
+        }, cancellationToken);
+
+        //Act
+        ResponseDTO response = await _studentService.Update(id, studentDTO, cancellationToken);
+
+        //Assert
+        Assert.NotNull(response);
+        Assert.Equal(statusDesired, response.StatusCode);
     }
 }

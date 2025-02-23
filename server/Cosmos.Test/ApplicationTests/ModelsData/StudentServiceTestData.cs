@@ -33,7 +33,7 @@ public static class StudentServiceTestData
         };
         yield return new object[]
         {
-            new CreateStudentDTO {Name = "João Alberto Pereira", Email = "", RA = "101236", CPF = "02941724834"},
+            new CreateStudentDTO {Name = "João Alberto Pereira", Email = "", RA = "111259", CPF = "02941724834"},
             CancellationToken.None
         };
         yield return new object[]
@@ -48,7 +48,7 @@ public static class StudentServiceTestData
         };
         yield return new object[]
         {
-            new CreateStudentDTO {Name = "ca", Email = "carlos.romao@gmail.com", RA = "101236", CPF = "02941724834"},
+            new CreateStudentDTO {Name = "ca", Email = "carlos.romao@gmail.com", RA = "101235", CPF = "02941724834"},
             new CancellationTokenSource().Token
         };
     }
@@ -56,12 +56,51 @@ public static class StudentServiceTestData
     {
         yield return new object[]
         {
-            new CreateStudentDTO {Name = "", Email = "", RA = "", CPF = ""},
+            new CreateStudentDTO {Name = "Lucrécia Alberta de Souza", Email = "lu_23@gmail.com", RA = "101235", CPF = "36094849000"},
             CancellationToken.None
         };
+    }
+
+    public static IEnumerable<object[]> ValidUpdateModels()
+    {
         yield return new object[]
         {
-            new CreateStudentDTO {Name = "", Email = "", RA = "", CPF = ""},
+            1,
+            new UpdateStudentDTO {Name = "Luciana", Email = "lu_23@gmail.com"},
+            CancellationToken.None
+        };
+
+        yield return new object[]
+        {
+            1,
+            new UpdateStudentDTO {Name = "Adalberto Rigas", Email = "rigas@bol.com"},
+            CancellationToken.None
+        };
+    }
+
+    public static IEnumerable<object[]> InvalidUpdateModels()
+    {
+        yield return new object[]
+        {
+            5,
+            404,
+            new UpdateStudentDTO {Name = "Luciana", Email = "lu_23@gmail.com"},
+            CancellationToken.None
+        };
+
+        yield return new object[]
+        {
+            1,
+            406,
+            new UpdateStudentDTO {Name = "", Email = "rigas@bol.com"},
+            CancellationToken.None
+        };
+
+        yield return new object[]
+        {
+            1,
+            406,
+            new UpdateStudentDTO {Name = "a", Email = "rigas@bol.com"},
             CancellationToken.None
         };
     }
