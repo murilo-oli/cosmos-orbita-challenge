@@ -1,27 +1,28 @@
 using Microsoft.EntityFrameworkCore;
 using Cosmos.Infrastructure.Context;
 using Cosmos.IOC;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
+DotNetEnv.Env.Load("../");
+
 builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+
 ConfigurationManager config = builder.Configuration;
 builder.Services.AddSingleton(d => config);
-#region Database
-builder.Services.AddDbContext<CosmosDbContext>(
-    options => options.UseNpgsql(config.GetConnectionString("Local")),
+
+builder.Services.AddDbContext<CosmosDbContext>(options =>
+    options.UseNpgsql(Environment.GetEnvironmentVariable("CONNECTION_STRING")),
     ServiceLifetime.Scoped
 );
 
-builder.Services.AddHttpContextAccessor();
-#endregion
-
-#region IOC
 builder.Services.Inject();
-#endregion
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -52,10 +53,12 @@ if (app.Environment.IsDevelopment())
         s.SwaggerEndpoint("/swagger/v1/swagger.json", "Cosmos v1");
     });
 }
-app.UseAuthorization();
-app.UseRouting();
-app.UseCors();
 
-app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication(); 
+app.UseAuthorization();
+app.UseCors();
 app.MapControllers();
+app.UseHttpsRedirection();
+
 app.Run();
