@@ -8,6 +8,8 @@ public class DataSeeder
 {
     public static void Seed(ModelBuilder modelBuilder)
     {
+        DotNetEnv.Env.Load("../../");
+
         modelBuilder.Entity<User>().HasData(new User
         {
             Id = 1,
@@ -15,7 +17,7 @@ public class DataSeeder
             Email = "admin@cosmos.com",
             AvatarPath = "",
             Role = Domain.Enums.EUserRole.Admin,
-            Password = "3C42822BB09F8BD829A0460F12E19DF3-085E00DFD40DB3AE",
+            Password = Environment.GetEnvironmentVariable("DEFAULT_FIRST_PASS")!,
         });
     }
 }

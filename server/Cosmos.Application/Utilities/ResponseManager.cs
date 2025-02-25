@@ -32,6 +32,4 @@ public static class ResponseManager
 
     public static ResponseDTO InternalBadRequest(dynamic? data = null, string? description = null) =>
         new(false, 400, EResponseType.BAD_REQUEST, $"Internal error message: {description}", data);
-
-
 }

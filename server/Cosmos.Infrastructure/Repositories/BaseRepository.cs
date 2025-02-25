@@ -48,6 +48,15 @@ public class BaseRepository<T> : IBaseRepository<T> where T : Base
         return await _context.Set<T>().AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<T?> GetByInclude(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(expression, cancellationToken);
+    }
+    public async Task<IEnumerable<T?>> GetAllByInclude(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default) 
+    {
+        return await _context.Set<T>().AsNoTracking().Where(expression).ToListAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<T>> GetAllFiltered(Func<IQueryable<T>, IQueryable<T>?> expression, Pagination? pagination, CancellationToken cancellationToken = default)
     {
         IQueryable<T> query = _context.Set<T>().AsNoTracking();

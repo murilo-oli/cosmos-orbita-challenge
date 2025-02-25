@@ -214,10 +214,10 @@ public class StudentService : IStudentService
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(model);
 
-        if (String.IsNullOrEmpty(model.CPF) ||
-            String.IsNullOrEmpty(model.RA) ||
-            String.IsNullOrEmpty(model.Name) ||
-            String.IsNullOrEmpty(model.Email))
+        if (String.IsNullOrEmpty(model.CPF.Trim()) ||
+            String.IsNullOrEmpty(model.RA.Trim()) ||
+            String.IsNullOrEmpty(model.Name.Trim()) ||
+            String.IsNullOrEmpty(model.Email.Trim()))
         {
             return ResponseManager.InvalidModel("Campos vazios.");
         }
