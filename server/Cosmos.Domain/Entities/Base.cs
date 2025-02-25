@@ -5,8 +5,17 @@ namespace Cosmos.Domain.Entities;
 
 public abstract class Base
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]
-    public long Id {get;set;} = 0;
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id {get;set;}
     public bool IsActive {get;set;} = true;
+    
+    [Required]
+    [StringLength(100)]
+    public string Name {get;set;} = default!;
+    
+    [Required]
+    [StringLength(320)]
+    [EmailAddress]
+    public string Email {get;set;} = default!;
 }

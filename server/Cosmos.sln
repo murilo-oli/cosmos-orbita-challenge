@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosmos.Application", "Cosmo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosmos.API", "Cosmos.API\Cosmos.API.csproj", "{2ADB6BBE-6BE7-4F80-807C-B729AE5F77A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosmos.IOC", "Cosmos.IOC\Cosmos.IOC.csproj", "{1725EA20-E458-416F-A96A-E4C910ED97D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cosmos.Test", "Cosmos.Test\Cosmos.Test.csproj", "{C440E535-EF7D-4828-B8D1-33F2354D9126}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{2ADB6BBE-6BE7-4F80-807C-B729AE5F77A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ADB6BBE-6BE7-4F80-807C-B729AE5F77A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ADB6BBE-6BE7-4F80-807C-B729AE5F77A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1725EA20-E458-416F-A96A-E4C910ED97D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1725EA20-E458-416F-A96A-E4C910ED97D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1725EA20-E458-416F-A96A-E4C910ED97D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1725EA20-E458-416F-A96A-E4C910ED97D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C440E535-EF7D-4828-B8D1-33F2354D9126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C440E535-EF7D-4828-B8D1-33F2354D9126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C440E535-EF7D-4828-B8D1-33F2354D9126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C440E535-EF7D-4828-B8D1-33F2354D9126}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
