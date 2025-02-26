@@ -44,7 +44,8 @@ namespace Cosmos.API.Controllers
                     user.Id,
                     user.Name,
                     user.Email,
-                    user.Role
+                    user.Role,
+                    user.AvatarPath,
                 }
             };
 

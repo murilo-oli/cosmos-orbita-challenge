@@ -54,10 +54,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCors();
 app.UseRouting();
 app.UseAuthentication(); 
 app.UseAuthorization();
-app.UseCors();
 app.MapControllers();
 app.UseHttpsRedirection();
 
