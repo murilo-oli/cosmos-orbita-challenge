@@ -5,7 +5,7 @@ definePageMeta({
 
 import { ref, onMounted } from 'vue';
 import { useDeviceStore } from '~/stores/useDeviceStore';
-import {useAuthStore} from '~/stores/useAuthStore';
+import { useAuthStore } from '~/stores/useAuthStore';
 const { $api } = useNuxtApp();
 const authStore = useAuthStore();
 const deviceStore = useDeviceStore();
@@ -16,8 +16,8 @@ const token = useCookie("token");
 
 const profile = ref({
   name: '',
-  email: '',
-  password: ''
+  password: '',
+  avatarPath: '',
 });
 
 const students = ref([]);
@@ -40,7 +40,7 @@ const handleLogout = () => {
 
   authStore.clearUser();
 
-  navigateTo('/auth', {replace:true})
+  navigateTo('/auth', { replace: true })
 }
 
 onMounted(async () => {
@@ -70,15 +70,24 @@ onMounted(async () => {
       </v-btn>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" :permanent="!deviceStore.isMobile" :temporary="deviceStore.isMobile">
-      <v-list>
-        <v-list-item prepend-icon="mdi-account-group" title="Gestão de Alunos"
-          @click="currentView = 'students'"></v-list-item>
-        <v-list-item prepend-icon="mdi-account-edit" title="Editar Conta"
-          @click="currentView = 'profile'"></v-list-item>
-        <v-list-item prepend-icon="mdi-logout-variant" title="Sair"
-          @click="handleLogout"></v-list-item>
-      </v-list>
+    <v-navigation-drawer app v-model="drawer" :permanent="!deviceStore.isMobile" :temporary="deviceStore.isMobile">
+      <section 
+      class="d-flex align-start flex-column justify-space-between  h-screen">
+        <section>
+          <v-img src=""></v-img>
+          <span>profile.name</span>
+          <v-list>
+            <v-list-item prepend-icon="mdi-account-group" title="Gestão de Alunos"
+              @click="currentView = 'students'"></v-list-item>
+            <v-list-item prepend-icon="mdi-account-edit" title="Editar Conta"
+              @click="currentView = 'profile'"></v-list-item>
+            <v-list-item prepend-icon="mdi-logout-variant" title="Sair" @click="handleLogout"></v-list-item>
+          </v-list>
+        </section>
+        <div class="align-self-center">
+          <v-img src="~/assets/imgs/logoBlack.svg" height="32" style="height: 128px; width: 128px;"></v-img>
+        </div>
+      </section>
     </v-navigation-drawer>
 
     <v-main>
@@ -90,6 +99,7 @@ onMounted(async () => {
               <v-text-field v-model="profile.name" label="Nome" variant="outlined" class="mb-4"></v-text-field>
               <v-text-field v-model="profile.password" label="Nova senha" type="password" variant="outlined"
                 class="mb-4"></v-text-field>
+              <span></span>
               <v-btn color="primary" type="submit" block>
                 Atualizar Dados
               </v-btn>
