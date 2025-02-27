@@ -2,8 +2,8 @@
 const { $api } = useNuxtApp();
 import { ref, computed } from "vue";
 import { loginSchema, registerSchema } from "~/schemas/AuthSchemas";
-import Toast from "./Toast.vue";
-import {useAuthStore} from '~/stores/useAuthStore';
+import Toast from "./base/Toast.vue";
+import { useAuthStore } from '~/stores/useAuthStore';
 
 const authStore = useAuthStore();
 
@@ -44,32 +44,21 @@ const handleSubmit = async () => {
   if (!validateForm()) return;
 
   loading.value = true;
+  const response = await $api.login.authUser({ Email: formData.value.email, Password: formData.value.password });
 
-  const { data, error } = await $api.login.authUser({}, { Email: formData.value.email, Password: formData.value.password});
+  textToast.value = response.description;
 
-  if(error.value){
-    textToast.value = error.value.data.description;
-    variantToast.value = "error";
-    
-  }else{
+  if(response.success){
     const token = useCookie("token");
-    authStore.setUserData(data.value.data.user);
-    token.value = data.value.data.token;
-    console.log("🌻 ~ handleSubmit ~ data.value:", data.value)
-    console.log("🌻 ~ handleSubmit ~ data.value:", )
-
-
-
-
+    authStore.setAuth(response.data.user, response.data.token);
+    token.value = response.data.token;
     variantToast.value = "success";
-
-    textToast.value = "Login executado com sucesso!";
-
-    navigateTo('/')
+    navigateTo('/', { replace: true })
+  }else{
+    variantToast.value = "error";
   }
-
   openToast.value = true;
-  
+
   loading.value = false;
 };
 </script>
@@ -91,6 +80,6 @@ const handleSubmit = async () => {
       </v-btn>
     </v-form>
 
-    <Toast :text="textToast" :model-value="openToast" :variant="variantToast"/>
+    <Toast :text="textToast" :model-value="openToast" :variant="variantToast" />
   </section>
 </template>

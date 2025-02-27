@@ -154,7 +154,7 @@ public class StudentService : IStudentService
 
         if (studentFound == null) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
-        return ResponseManager.Success(studentFound);
+        return ResponseManager.Success(studentFound, "Estudante carregado com sucesso!");
     }
 
     public async Task<ResponseDTO> GetById(long Id, CancellationToken cancellationToken)
@@ -163,7 +163,7 @@ public class StudentService : IStudentService
 
         if (studentFound == null) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
-        return ResponseManager.Success(studentFound);
+        return ResponseManager.Success(studentFound, "Estudante carregado com sucesso!");
     }
 
     public async Task<ResponseDTO> GetAllFiltered(Pagination? pagination, FilterDTO filter, CancellationToken cancellationToken)
@@ -174,7 +174,7 @@ public class StudentService : IStudentService
 
         if (!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
-        return ResponseManager.Success(studentFound);
+        return ResponseManager.Success(studentFound, "Estudantes carregados com sucesso!");
     }
 
     public async Task<ResponseDTO> GetAll(Pagination? pagination, CancellationToken cancellationToken)
@@ -183,7 +183,7 @@ public class StudentService : IStudentService
 
         if (!studentFound.Any()) return ResponseManager.NotFound("Nenhum estudante encontrado!");
 
-        return ResponseManager.Success(studentFound);
+        return ResponseManager.Success(studentFound, "Estudantes carregados com sucesso!");
     }
 
     private static Func<IQueryable<Student>, IQueryable<Student>> BuildStudentQuery(FilterDTO filter)

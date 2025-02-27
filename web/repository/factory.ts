@@ -8,20 +8,18 @@ class FetchFactory<T> {
     }
 
     async call(
-        method:string,
-        url:string,
+        method: string,
+        url: string,
         data?: object,
         fetchOptions?: FetchOptions<'json'>
     ): Promise<T> {
-        return this.$fetch<T>(
-            url,
-            {
-                method,
-                body:data,
-                parseResponse:JSON.parse,
-                ...fetchOptions
-            }
-        )
+        const response = await this.$fetch<T>(url, {
+            method,
+            body: data,
+            ...fetchOptions
+        });
+
+        return structuredClone(response); 
     }
 }
 

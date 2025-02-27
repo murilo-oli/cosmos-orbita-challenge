@@ -20,7 +20,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Admin, Manager, Member")]
         public async Task<IActionResult> GetFiltered([FromQuery] FilterDTO filter, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _studentService.GetFiltered(filter, cancellationToken);
@@ -30,7 +30,7 @@ namespace Cosmos.API.Controllers
 
         [HttpGet]
         [Route("all")]
-        [Authorize]
+        [Authorize(Roles = "Admin, Manager, Member")]
         public async Task<IActionResult> GetAllFiltered([FromQuery] Pagination? pagination, [FromQuery] FilterDTO filter, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _studentService.GetAllFiltered(pagination, filter, cancellationToken);
@@ -39,8 +39,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Manager")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Post([FromBody] CreateStudentDTO student, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _studentService.Add(student, cancellationToken);
@@ -49,8 +48,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "Manager")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Put([FromBody] UpdateStudentDTO student, long id, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _studentService.Update(id, student, cancellationToken);
@@ -59,8 +57,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpPatch("{id}/{status}")]
-        [Authorize(Policy = "Manager")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Patch(long id, bool status, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _studentService.SetStatus(id, status, cancellationToken);
@@ -69,7 +66,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _studentService.Delete(id, cancellationToken);

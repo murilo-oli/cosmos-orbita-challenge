@@ -1,44 +1,23 @@
-
 import type { FetchOptions } from 'ofetch';
-import type { AsyncDataOptions } from '#app';
 
 import FetchFactory from '../factory';
 
 type ILogin = {
-  email: string,
-  password: string
+  email: string;
+  password: string;
 };
 
-type IAuthReturn = {
-  Token: string,
-  User: {
-    Id: number,
-    Name: string,
-    Email: string,
-    Role: number
-  }
-}
+type AuthResponse = {
+  token: string;
+  user: { id: number; name: string; email: string; role: number; avatarPath: string };
+};
 
-class LoginModule extends FetchFactory<object> {
+class LoginModule extends FetchFactory<AuthResponse> {
   private RESOURCE = 'auth/login';
 
-  async authUser(
-    asyncDataOptions?: AsyncDataOptions<object>,
-    body?: ILogin
-  ) {
-
-    return useAsyncData(
-      () => {
-        const fetchOptions: FetchOptions<'json'> = {};
-        return this.call(
-          'POST',
-          `${this.RESOURCE}`,
-          body,
-          fetchOptions
-        )
-      },
-      asyncDataOptions
-    )
+  async authUser(body: ILogin): Promise<AuthResponse> {
+    const fetchOptions: FetchOptions<'json'> = {};
+    return this.call('POST', `${this.RESOURCE}`, body, fetchOptions);
   }
 }
 

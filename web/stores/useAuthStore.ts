@@ -1,28 +1,24 @@
 import { defineStore } from "pinia";
-import { useCookie } from "#app";
-import { ref, computed } from "vue";
 
-export const useAuthStore = defineStore("auth", () => {
-  const tokenCookie = useCookie("token");
-  const token = ref<string | null>(tokenCookie.value || null);
-  const user = ref<{ id: number; name: string; email: string; role: number; avatharPath: string } | null>(null);
+interface User {
+  id: number; name: string; email: string; role: number; avatharPath: string
+}
 
-  function setUserData(userData: any) {
-    token.value = userData.token;
-    tokenCookie.value = userData.token;
-    user.value = userData.user;
+export const useAuthStore = defineStore("user", {
+  state: () => {
+    return {
+      user: {} as User,
+      token: "" as String
+    }
+  },
+  actions: {
+    setAuth(user: User, token: string) {
+      this.user = user;
+      this.token = token;
+    },
+    clearAuth() {
+      this.user = {} as User;
+      this.token = "";
+    },
   }
-
-  function clearUser() {
-    token.value = null;
-    tokenCookie.value = null;
-    user.value = null;
-  }
-
-  return {
-    token: computed(() => token.value),
-    user,
-    setUserData,
-    clearUser,
-  };
 });

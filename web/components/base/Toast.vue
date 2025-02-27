@@ -19,7 +19,7 @@ const emit = defineEmits(["update:modelValue"]);
 </script>
 <template>
     <v-snackbar :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :timeout="1500"
-        :color="variant">
+        :color="variant" @timeout="emit('update:modelValue', false)">
         {{ text }}
     </v-snackbar>
 </template>
