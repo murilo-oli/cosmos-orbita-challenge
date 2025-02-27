@@ -30,7 +30,7 @@ public class AuthService : IAuthService
 
         bool validPassword = PasswordEncrypter.ValidateHash(loginDTO.Password, userFound.Password);
 
-        if(!validPassword) ResponseManager.Forbidden("Usuário não autenticado.");
+        if(!validPassword) return ResponseManager.Forbidden("Usuário não autenticado.");
 
         userFound.Password = "";
 

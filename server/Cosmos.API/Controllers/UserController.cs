@@ -21,7 +21,7 @@ namespace Cosmos.API.Controllers
 
         [HttpGet]
         [Route("all")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll([FromQuery] Pagination? pagination, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _userService.GetAll(pagination, cancellationToken);
@@ -30,7 +30,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Post([FromBody] CreateUserDTO user, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _userService.Add(user, cancellationToken);
@@ -39,7 +39,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromBody] UpdateUserDTO user, long id, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _userService.Update(id, user, cancellationToken);
@@ -48,7 +48,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpPatch("{id}/{status}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Patch(long id, bool status, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _userService.SetStatus(id, status, cancellationToken);
@@ -57,7 +57,7 @@ namespace Cosmos.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
         {
             ResponseDTO response = await _userService.Delete(id, cancellationToken);
