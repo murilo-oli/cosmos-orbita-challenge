@@ -1,0 +1,8 @@
+services:
+  cosmos-api:
+    build: .
+    ports:
+      - "5143:5143"
+    env_file:
+      - .env
+    restart: always
